@@ -1,7 +1,7 @@
 # ASVspoof
 
 ## Timelines
-**[20/10 - 26/20]**
+**[20/10 - 26/10]**
 
 [1] Shentong/Haofan: python reimplementation of CQCC
 
