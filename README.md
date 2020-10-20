@@ -1,7 +1,7 @@
 # ASVspoof
 
 ## Timelines
-**[20/10 - 26/20]**
+**[20/10 - 26/10]**
 
 [1] Shentong/Haofan: python reimplementation of CQCC
 
@@ -12,6 +12,9 @@
 
 ## Reports
 proposal overleaf: https://www.overleaf.com/project/5f6954ebb68ba500013c78f1
+
+## Dataset (LA)
+Google drive: https://drive.google.com/file/d/1UGs1o2mDiBO9_iaN-0FupS8x0Tkb4xmt/view?usp=sharing
 
 ## Feature Extraction
 ### CQCC (baseline)
