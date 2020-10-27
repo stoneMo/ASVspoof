@@ -1,1 +1,0 @@
-"TO DO X-vector feature extraction"
