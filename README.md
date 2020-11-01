@@ -20,8 +20,12 @@ Google drive: https://drive.google.com/file/d/1UGs1o2mDiBO9_iaN-0FupS8x0Tkb4xmt/
 ### CQCC (baseline)
 TO DO python reimplementation of the baseline.
 
-### X-vector 
-TO DO 
+### MFCC
+python3 data_processing.py --data_path ./LA/ASVspoof2019_LA_train/flac --output_path ./data/train.pkl --label_path ./LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.train.trn.txt
+python3 data_processing.py --data_path ./LA/ASVspoof2019_LA_dev/flac --output_path ./data/dev.pkl --label_path ./LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.dev.trl.txt
+python3 data_processing.py --data_path ./LA/ASVspoof2019_LA_eval/flac --output_path ./data/eval.pkl --label_path ./LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.eval.trl.txt
+
+The saved pickle file has the format: [(mfcc_vec[timestepx13], label[bonafide/spoof]) x N instances]
 
 ## Classifier
 
@@ -29,7 +33,9 @@ TO DO
 
 
 ### SVM
-
+python3 SVM.py --data_path ./data/train.pkl
+python3 SVM_test.py --data_path ./data/dev.pkl
+python3 SVM_test.py --data_path ./data/eval.pkl
 
 
 ## Referecne
