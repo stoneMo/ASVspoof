@@ -30,7 +30,7 @@ def cqtCell2Sparse(c, M):
 
 
 def cell2mat(c):
-    print("c.length:", len(c))
+    # print("c.length:", len(c))
     c = np.stack(c)
     if c.ndim == 3:
         c = np.squeeze(c, axis=-1)

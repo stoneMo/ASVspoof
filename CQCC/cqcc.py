@@ -1,6 +1,6 @@
 import numpy as np
 import math
-from CQT_toolbox_2013.cqt import cqt
+from CQCC.CQT_toolbox_2013.cqt import cqt
 # import scikits.samplerate as sk_samplerate
 import scipy
 import librosa
@@ -87,7 +87,7 @@ def cqcc(*args):
 
     # CHECK INPUT PARAMETERS
     nargin = len(args)
-    print("cqcc_nargin:", nargin)
+    # print("cqcc_nargin:", nargin)
     if nargin < 2:
         raise ValueError('Not enough input arguments.')
 
@@ -126,16 +126,16 @@ def cqcc(*args):
         ZsdD = args[7]
 
     gamma = 228.7*(2**(1/B)-2**(-1/B))
-    print("cqcc_gamma", gamma)
+    # print("cqcc_gamma", gamma)
 
-    print("X:", x.shape)
+    # print("X:", x.shape)
 
     # CQT COMPUTING
     Xcq = cqt(x, B, fs, fmin, fmax, 'rasterize', 'full', 'gamma', gamma)
 
     # LOG POWER SPECTRUM
     absCQT = abs(Xcq['c'])
-    print(absCQT.shape)
+    # print(absCQT.shape)
     # print(absCQT[0][:5])
 
     TimeVec = np.arange(1, absCQT.shape[1]+1).reshape(1,-1)

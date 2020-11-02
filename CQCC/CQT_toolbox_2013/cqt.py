@@ -1,8 +1,8 @@
 import numpy as np
 import math
-from CQT_toolbox_2013.nsgcqwin import nsgcqwin
-from CQT_toolbox_2013.nsgtf_real import nsgtf_real
-from CQT_toolbox_2013.cqtCell2Sparse import cell2mat, cqtCell2Sparse
+from CQCC.CQT_toolbox_2013.nsgcqwin import nsgcqwin
+from CQCC.CQT_toolbox_2013.nsgtf_real import nsgtf_real
+from CQCC.CQT_toolbox_2013.cqtCell2Sparse import cell2mat, cqtCell2Sparse
 
 def cqt(*args):
     # %CQT  Constant-Q/Variable-Q transform
@@ -145,13 +145,13 @@ def cqt(*args):
             elif varargin[ii] == 'win':
                 windowFct = varargin[ii+1]
 
-    print("cqt_fmin:", fmin)
-    print("cqt_fmax:", fmax)
-    print("cqt_B", B)
-    print("cqt_fs", fs)
-    print("cqt_len(x)", len(x))
-    print("cqt_windowFct", windowFct)
-    print("cqt_gamma", gamma)
+    # print("cqt_fmin:", fmin)
+    # print("cqt_fmax:", fmax)
+    # print("cqt_B", B)
+    # print("cqt_fs", fs)
+    # print("cqt_len(x)", len(x))
+    # print("cqt_windowFct", windowFct)
+    # print("cqt_gamma", gamma)
     # window design
     g,shift,M = nsgcqwin(fmin, fmax, B, fs, len(x), 'winfun', windowFct, 'gamma', gamma, 'fractional', 0)
     
@@ -170,8 +170,8 @@ def cqt(*args):
 
     # compute coefficients
     bins = int(M.shape[0]/2) - 1
-    print(bins)
-    print(rasterize)
+    # print(bins)
+    # print(rasterize)
     # print(M)
 
     if rasterize == 'full':
@@ -198,7 +198,7 @@ def cqt(*args):
         mtemp[1-1] = M[1-1] # don't rasterize DC bin
         M = mtemp
 
-    print(normalize)
+    # print(normalize)
     if normalize in {'sine','Sine','SINE','sin'}:
         normFacVec = 2*M[:bins+2] / len(x)
     elif normalize in {'impulse','Impulse', 'IMPULSE','imp'}:
@@ -212,8 +212,8 @@ def cqt(*args):
     # print(normFacVec.shape)
     normFacVec = np.append(normFacVec, normFacVec[-2:0:-1])
 
-    print(max(normFacVec))
-    print(normFacVec.shape)
+    # print(max(normFacVec))
+    # print(normFacVec.shape)
 
     g = g[:(2*bins+2)] * normFacVec[:(2*bins+2)]
     g = g.T
@@ -223,7 +223,7 @@ def cqt(*args):
     # print(shift)
     # print(shift.shape)
     # print(max(shift))
-    print(phasemode)
+    # print(phasemode)
 
     c, _ = nsgtf_real(x, g, shift, M, phasemode)    # note that returned c is a list
 

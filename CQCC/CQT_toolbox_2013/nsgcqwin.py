@@ -1,7 +1,7 @@
 import numpy as np
 import math
 import warnings 
-from CQT_toolbox_2013.winfuns import winfuns
+from CQCC.CQT_toolbox_2013.winfuns import winfuns
 
 # function [g,shift,M] = nsgcqwin(fmin,fmax,bins,sr,Ls,varargin)
 def nsgcqwin(*args):
@@ -127,10 +127,10 @@ def nsgcqwin(*args):
 
     nf = sr/2
 
-    print("nsgcqwin_gamma:", gamma)
-    print("nsgcqwin_bwfac:", bwfac)
-    print("nsgcqwin_fractional:", fractional)
-    print("nsgcqwin_winfun:", winfun)
+    # print("nsgcqwin_gamma:", gamma)
+    # print("nsgcqwin_bwfac:", bwfac)
+    # print("nsgcqwin_fractional:", fractional)
+    # print("nsgcqwin_winfun:", winfun)
 
     if fmax > nf:
         fmax = nf
@@ -176,7 +176,7 @@ def nsgcqwin(*args):
     # print(cqtbw)
 
     Lfbas = len(fbas)
-    print(Lfbas)
+    # print(Lfbas)
 
     # print(max(fbas))
 
@@ -249,7 +249,7 @@ def nsgcqwin(*args):
             bw[ii] = min_win
             M[ii] = bw[ii]
     
-    print(max(M))
+    # print(max(M))
     # print(M[200:400])
     # print(bw)
     # print(M)

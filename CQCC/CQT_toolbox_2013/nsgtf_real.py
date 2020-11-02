@@ -72,11 +72,11 @@ def nsgtf_real(*args):
     f = args[0] 
     g = args[1]
 
-    print(f.shape)
+    # print(f.shape)
 
     Ls, CH = f.shape
 
-    print(Ls, CH)
+    # print(Ls, CH)
 
     if Ls == 1:
         f = f.T
@@ -110,7 +110,7 @@ def nsgtf_real(*args):
     phasemode = args[4]
 
     N = len(shift)    # The number of frequency slices
-    print(N)
+    # print(N)
 
     if nargin == 3:
         M = np.zeros((N,1))

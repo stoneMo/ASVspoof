@@ -17,7 +17,7 @@ args = parser.parse_args()
 def extract_cqcc(x, fs):
     # INPUT SIGNAL
     x = x.reshape(x.shape[0], 1)  # for one-channel signal 
-    print(x.shape)
+    # print(x.shape)
     # fs: 16000
     # x: (64244,)
     # PARAMETERS
@@ -49,7 +49,10 @@ for filepath in os.listdir(args.data_path):
         feat = extract_cqcc(sig, rate)
     elif args.feature_type == "mfcc":
         feat = mfcc(sig, rate)
+    print("feat:", feat.shape)
     feats.append((feat, label))
+
+print("number of instances:", len(feats))
 
 with open(args.output_path, 'wb') as outfile:
     pickle.dump(mfcc_feats, outfile)
