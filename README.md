@@ -18,16 +18,16 @@ Google drive: https://drive.google.com/file/d/1UGs1o2mDiBO9_iaN-0FupS8x0Tkb4xmt/
 
 ## Feature Extraction
 ### CQCC (baseline)
-python3 data_processing.py --data_path ./LA/ASVspoof2019_LA_train/flac --output_path ./data/train_cqcc.pkl --label_path ./LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.train.trn.txt
-python3 data_processing.py --data_path ./LA/ASVspoof2019_LA_dev/flac --output_path ./data/dev_cqcc.pkl --label_path ./LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.dev.trl.txt
-python3 data_processing.py --data_path ./LA/ASVspoof2019_LA_eval/flac --output_path ./data/eval_cqcc.pkl --label_path ./LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.eval.trl.txt
+python3 data_processing.py --data_path /Volumes/LA/ASVspoof2019_LA_train/flac --output_path ./data/train_cqcc.pkl --label_path ./LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.train.trn.txt --feature_type cqcc
+python3 data_processing.py --data_path /Volumes/LA/ASVspoof2019_LA_dev/flac --output_path ./data/dev_cqcc.pkl --label_path ./LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.dev.trl.txt --feature_type cqcc
+python3 data_processing.py --data_path /Volumes/LA/ASVspoof2019_LA_eval/flac --output_path ./data/eval_cqcc.pkl --label_path ./LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.eval.trl.txt --feature_type cqcc
 
 The saved pickle file has the format: [(cqcc_vec[timestepx60], label[bonafide/spoof]) x N instances]
 
 ### MFCC
-python3 data_processing.py --data_path ./LA/ASVspoof2019_LA_train/flac --output_path ./data/train_mfcc.pkl --label_path ./LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.train.trn.txt
-python3 data_processing.py --data_path ./LA/ASVspoof2019_LA_dev/flac --output_path ./data/dev_mfcc.pkl --label_path ./LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.dev.trl.txt
-python3 data_processing.py --data_path ./LA/ASVspoof2019_LA_eval/flac --output_path ./data/eval_mfcc.pkl --label_path ./LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.eval.trl.txt
+python3 data_processing.py --data_path ./LA/ASVspoof2019_LA_train/flac --output_path ./data/train_mfcc.pkl --label_path ./LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.train.trn.txt --feature_type mfcc
+python3 data_processing.py --data_path ./LA/ASVspoof2019_LA_dev/flac --output_path ./data/dev_mfcc.pkl --label_path ./LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.dev.trl.txt --feature_type mfcc
+python3 data_processing.py --data_path ./LA/ASVspoof2019_LA_eval/flac --output_path ./data/eval_mfcc.pkl --label_path ./LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.eval.trl.txt --feature_type mfcc
 
 The saved pickle file has the format: [(mfcc_vec[timestepx13], label[bonafide/spoof]) x N instances]
 
