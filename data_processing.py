@@ -49,7 +49,7 @@ for filepath in os.listdir(args.data_path):
         feat = extract_cqcc(sig, rate)
     elif args.feature_type == "mfcc":
         feat = mfcc(sig, rate)
-    print("feat:", feat.shape)
+    print(filename, feat.shape)
     feats.append((feat, label))
 
 print("number of instances:", len(feats))
