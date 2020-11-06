@@ -14,7 +14,7 @@ y = []
 with open(args.data_path, 'rb') as infile:
     data = pickle.load(infile)
     for mfccs, label in data:
-        mfcc = mfccs.mean(0) # sum over all timesteps for now
+        mfcc = mfccs.mean(0) # sum over all timesteps for now    # timesteps X 13
         X.append(mfcc)
         y.append(label)
 

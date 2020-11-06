@@ -55,6 +55,6 @@ for filepath in os.listdir(args.data_path):
 print("number of instances:", len(feats))
 
 with open(args.output_path, 'wb') as outfile:
-    pickle.dump(mfcc_feats, outfile)
+    pickle.dump(feats, outfile)
 
 

@@ -32,9 +32,8 @@ def extract_features(audio,rate):
     mfcc_feat = mfcc.mfcc(audio,rate, 0.025, 0.01,20,appendEnergy = True, nfft=1103)
     mfcc_feat = preprocessing.scale(mfcc_feat)
     delta = calculate_delta(mfcc_feat)
-
     #combining both mfcc features and delta
-    combined = np.hstack((mfcc_feat,delta)) 
+    combined = np.hstack((mfcc_feat,delta))   # timestep * 13 
     return combined
 
 source = './LA/ASVspoof2019_LA_train/flac/'
