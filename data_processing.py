@@ -44,12 +44,13 @@ for filepath in os.listdir(args.data_path):
     if filename not in filename2label: # we skip speaker enrollment stage
         continue
     label = filename2label[filename]
+    print("filename:", filename)
     sig, rate = sf.read(os.path.join(args.data_path, filepath))
     if args.feature_type == "cqcc":
         feat = extract_cqcc(sig, rate)
     elif args.feature_type == "mfcc":
         feat = mfcc(sig, rate)
-    print(filename, feat.shape)
+    print("feat:", feat.shape)
     feats.append((feat, label))
 
 print("number of instances:", len(feats))
