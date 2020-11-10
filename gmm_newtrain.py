@@ -132,14 +132,16 @@ def traingmm(gmm, datafeature, name):
 
 if __name__ == '__main__':
     
-    source = './ASVspoof2019_LA_train/flac/'
+    source = './LA/ASVspoof2019_LA_train/flac/'
     #source = './ASVspoof2019_LA_train/remain/'
 
-    bon, sp = txtsplit('./ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.train.trn.txt')
+    bon, sp = txtsplit('./LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.train.trn.txt')
 
     maxpad = 1320
     bon_features, sp_features = datasplit(bon, sp, source, maxpad)
 
+    print("bon_features:", bon_features.shape)
+    print("sp_features:", sp_features.shape)
     
 
     #print(len(lenth), np.max(lenth), np.mean(lenth), stats.mode(lenth)[0][0])
@@ -149,5 +151,5 @@ if __name__ == '__main__':
     # 22800 1318 341.9821929824561 297
 
     traingmm(gmm_bon, bon_features, bname, dest)
-    traingmm(gmm_sp , sp_features , spnum, sname, dest)
+    traingmm(gmm_sp , sp_features, spnum, sname, dest)
     # Took about 1 h for this setup
