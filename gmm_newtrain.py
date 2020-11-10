@@ -164,5 +164,5 @@ if __name__ == '__main__':
     # 22800 1318 341.9821929824561 297
 
     traingmm(gmm_bon, bon_features, bname, dest)
-    traingmm(gmm_sp , sp_fold , spnum, sname, dest)
+    traingmm(gmm_sp , sp_features , spnum, sname, dest)
     # Took about 1 h for this setup
