@@ -55,20 +55,27 @@ def padvec(vector, maxpad):
     vec2 = np.vstack((vec, padback))
     return vec2
 
-def datasplit(bon, sp, source, bon_fold, sp_fold, maxbon, maxsp):
+def datasplit(bon, sp, source, bon_fold, sp_fold, maxpad):
     # feature
     i = 0
     j_bon = 0
     k_sp = 0
 
+    totalfilenum = len([name for name in os.listdir(source) if os.path.isfile(os.path.join(source, name))])
+
     for file in os.listdir(source):
+        '''
+        # Debug
+        if ((j_bon > 10) and (k_sp > 50)) :  
+            break
+        '''
         if (i == 0):
             t0 = time.time()
         i += 1
         if (i %50 == 0):
             t = time.time() - t0
-            remain = t/i * (25380 - i)
-            print(i/253.8, '%,remain:', remain ,'s, i = ',i)
+            remain = t/i * (totalfilenum - i)
+            print(i/totalfilenum*100, '%, processed file num =', i, ' remain time:', remain ,'s')
         f = file
 
         if (f in bon):
@@ -78,6 +85,7 @@ def datasplit(bon, sp, source, bon_fold, sp_fold, maxbon, maxsp):
 
             # extract 40 dimensional MFCC & delta MFCC features
             vector  = extract_features(audio,sr)
+            vector = padvec(vector, maxpad).reshape(1, -1)
             j_bon += 1
             np.save(bon_fold+'bon_features_'+ str(j_bon) +'.npy', vector)
             if (j_bon % 100 == 0):                
@@ -90,12 +98,13 @@ def datasplit(bon, sp, source, bon_fold, sp_fold, maxbon, maxsp):
             audio, sr = sf.read(file)
             # extract 40 dimensional MFCC & delta MFCC features
             vector  = extract_features(audio,sr)
+            vector = padvec(vector, maxpad).reshape(1, -1)
             k_sp += 1
             np.save(sp_fold+'sp_features_'+ str(k_sp) +'.npy', vector)
             if (k_sp % 100 == 50):
                 print(k_sp,'sp saved')
                 #gc.collect() # clear up memory
-    print('Final saved')
+    return j_bon, k_sp
 
 def txtsplit(dest):
     with open(dest) as file:
@@ -111,53 +120,58 @@ def txtsplit(dest):
     return bon, sp
 
 if __name__ == '__main__':
-    source = './ASVspoof2019_LA_train/flac/'
+    source = './ASVspoof2019_LA_dev/flac/'
     #source = './ASVspoof2019_LA_train/remain/'
-    dest = './gmm_models/'
 
     bon_fold = './bon_features/'
     sp_fold = './sp_features/'
 
+    dest = './gmm_models/'
+
     bname = 'bon'
     sname = 'sp'
 
-    bon, sp = txtsplit('./ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.train.trn.txt')
-    maxbon = 1120
-    maxsp = 1320
-    datasplit(bon, sp, source, bon_fold, sp_fold, maxbon, maxsp)
+    bon, sp = txtsplit('./ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.dev.trl.txt')
+    maxpad = 1320
+    j_bon, k_sp = datasplit(bon, sp, source, bon_fold, sp_fold, maxpad)
+    print()
+    print('###################################################################')
     
 
     # training data accuracy
-    gmm_bon = pickle.load(open(bname + '.gmm','rb'))
-    gmm_sp  = pickle.load(open(sname + '.gmm','rb'))
+    gmm_bon = pickle.load(open(dest + bname + '.gmm','rb'))
+    gmm_sp  = pickle.load(open(dest + sname + '.gmm','rb'))
 
     predb = []
     preds = []
 
-    samplenum = 2500 # max to 2580
-    for i in range(samplenum):
+    for i in range(j_bon):
         if (i % 50 == 0):
-            print(i)
+            print('Evaluating Bon sample at',i/j_bon * 100, '%')
         file = 'bon_features_'+str(i+1)+'.npy'
 
         file = os.path.join(bon_fold, file)
         X = np.load(file)
-        X = padvec(X, maxbon).reshape(1, -1)
         bscore = gmm_bon.score(X)
         sscore = gmm_sp.score(X)
 
         #predb.append(np.exp(bscore)-np.exp(sscore))
         predb.append(bscore-sscore)
+
+    for i in range(k_sp):
+        if (i % 50 == 0):
+            print('Evaluating Sp sample at',i/k_sp * 100, '%')
         file = 'sp_features_'+str(i+1)+'.npy'
 
         file = os.path.join(sp_fold, file)
         X = np.load(file)
-        X = padvec(X, maxsp).reshape(1, -1)
         bscore = gmm_bon.score(X)
         sscore = gmm_sp.score(X)
 
         #preds.append(np.exp(bscore)-np.exp(sscore))
         preds.append(bscore-sscore)
+    print()
+    print('###################################################################')
 
     predb1 = np.asarray(predb)
     preds1 = np.asarray(preds)
@@ -165,12 +179,12 @@ if __name__ == '__main__':
     predb1[predb1 < 0] = 0
     predb1[predb1 > 0] = 1
     predbresult1 = np.sum(predb1)
-    print(predbresult1, 'Accuracy = ', predbresult1/samplenum )# 0.7356
+    print(predbresult1, 'Bon samples were CORRECTLY evaluated out of', j_bon,'samples. Bon_Accuracy = ', predbresult1/j_bon )# 0.7356
 
 
     preds1[preds1 > 0] = 0
     preds1[preds1 < 0] = 1
     predsresult = np.sum(preds1)
-    print(predsresult, 'Accuracy = ', predsresult/samplenum)# 0.4092
+    print(predsresult, 'Sp samples were CORRECTLY evaluated out of', k_sp, 'samples. Sp_Accuracy = ', predsresult/k_sp)# 0.4092
 
-    print((predbresult1 + predsresult)/samplenum/2)
+    print('Total GMM Classifier Accuracy = ',(predbresult1 + predsresult)/(j_bon + k_sp))
