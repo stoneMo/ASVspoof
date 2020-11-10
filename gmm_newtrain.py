@@ -57,7 +57,7 @@ def padvec(vector, maxpad):
     vec2 = np.vstack((vec, padback))
     return vec2
 
-def datasplit(bon, sp, source, maxbon, maxsp):
+def datasplit(bon, sp, source, maxpad):
     # feature
     bon_features = []
     sp_features = []
@@ -82,11 +82,10 @@ def datasplit(bon, sp, source, maxbon, maxsp):
 
             # extract 40 dimensional MFCC & delta MFCC features
             vector  = extract_features(audio,sr)
-            vector = padvec(vector, maxbon).reshape(1, -1)
+            vector = padvec(vector, maxpad).reshape(1, -1)
             j_bon += 1
-            set_trace()
             if (bon_features == []):
-                bon_features = vector
+                bon_features = vector #(1, 52800)
             else:
                 bon_features = np.vstack((bon_features, vector))
             if (j_bon % 100 == 0):                
@@ -99,11 +98,10 @@ def datasplit(bon, sp, source, maxbon, maxsp):
             audio, sr = sf.read(file)
             # extract 40 dimensional MFCC & delta MFCC features
             vector  = extract_features(audio,sr)
-            vector = padvec(vector, maxsp).reshape(1, -1)
+            vector = padvec(vector, maxpad).reshape(1, -1)
             k_sp += 1
-            set_trace()
             if (sp_features == []):
-                sp_features = vector
+                sp_features = vector #(1, 52800)
             else:
                 sp_features = np.vstack((sp_features, vector))
 
@@ -132,18 +130,6 @@ def traingmm(gmm, datafeature, name):
     # saving the trained gaussian model
     pickle.dump(gmmmodel, open(name + '.gmm', 'wb'))
 
-def test(data_fold):
-    lenth = []
-    i = 0
-    for file in os.listdir(data_fold):
-        i += 1
-        file = os.path.join(data_fold, file)
-        features = np.load(file)
-        lenth.append(features.shape[0])
-        if (i % 50 == 49):
-            print('Calculating on #',i)
-    print(len(lenth), np.max(lenth), np.mean(lenth), stats.mode(lenth)[0][0])
-
 if __name__ == '__main__':
     
     source = './ASVspoof2019_LA_train/flac/'
@@ -151,16 +137,15 @@ if __name__ == '__main__':
 
     bon, sp = txtsplit('./ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.train.trn.txt')
 
-    maxbon = 1120
-    maxsp = 1320
-    bon_features, sp_features = datasplit(bon, sp, source, maxbon, maxsp)
+    maxpad = 1320
+    bon_features, sp_features = datasplit(bon, sp, source, maxpad)
 
     
 
     #print(len(lenth), np.max(lenth), np.mean(lenth), stats.mode(lenth)[0][0])
-    gmm_bon = GMM(n_components = 289, covariance_type='diag',n_init = 50,warm_start= True) # min shape[0] = 135 # max = 1112
+    gmm_bon = GMM(n_components = 512, covariance_type='diag',n_init = 50,warm_start= True) # min shape[0] = 135 # max = 1112
     # 2580 1112 337.8709302325581 289
-    gmm_sp  = GMM(n_components = 297, covariance_type='diag',n_init = 50,warm_start= True)  # min shape[0] = 64  # max = 1318
+    gmm_sp  = GMM(n_components = 512, covariance_type='diag',n_init = 50,warm_start= True)  # min shape[0] = 64  # max = 1318
     # 22800 1318 341.9821929824561 297
 
     traingmm(gmm_bon, bon_features, bname, dest)
