@@ -16,14 +16,15 @@ max_len = 50
 lens = []
 with open(args.data_path, 'rb') as infile:
     data = pickle.load(infile)
-    for mfccs, label in data:
+    for feats, label in data:
         #mfcc = mfccs.mean(0) # sum over all timesteps for now    # timesteps X 13
         #lens.append(mfccs.shape[0])
-        if len(mfccs) > max_len:
-            mfccs = mfccs[:max_len]
-        elif len(mfccs) < max_len:
-            mfccs = np.concatenate((mfccs, np.array([[0.]*13]*(max_len-len(mfccs)))), axis=0)
-        X.append(mfccs.reshape(-1))
+        num_dim = feats.shape[1]
+        if len(feats) > max_len:
+            feats = feats[:max_len]
+        elif len(feats) < max_len:
+            feats = np.concatenate((feats, np.array([[0.]*num_dim]*(max_len-len(feats)))), axis=0)
+        X.append(feats.reshape(-1))
         y.append(label)
 X = np.array(X)
 #clf = SVC(class_weight='balanced')
