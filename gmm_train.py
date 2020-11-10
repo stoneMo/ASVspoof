@@ -10,6 +10,7 @@ from python_speech_features import mfcc
 from sklearn.mixture import GaussianMixture as GMM
 from sklearn import preprocessing
 from pdb import set_trace
+from scipy import stats
 # https://github.com/MohamadMerchant/Voice-Authentication-and-Face-Recognition
 def calculate_delta(array):
     rows,cols = array.shape
@@ -43,7 +44,19 @@ def extract_features(audio,rate):
     combined = np.hstack((mfcc_feat,delta)) 
     return combined
 
-def datasplit(bon, sp, source, dest, bon_fold, sp_fold):
+def padvec(vector, maxpad):
+    needpad = maxpad - vector.shape[0]
+    needfront = needpad // 2
+    needback = needpad - needfront
+
+    padfront = np.zeros((needfront, vector.shape[1]))
+    padback  = np.zeros((needback,  vector.shape[1]))
+
+    vec = np.vstack((padfront, vector))
+    vec2 = np.vstack((vec, padback))
+    return vec2
+
+def datasplit(bon, sp, source, dest, bon_fold, sp_fold, maxbon, maxsp):
     # feature
     bon_features = np.array([])
     sp_features = np.array([])
@@ -60,20 +73,27 @@ def datasplit(bon, sp, source, dest, bon_fold, sp_fold):
             remain = t/i * (25380 - i)
             print(i/253.8, '%,remain:', remain ,'s, i = ',i)
         f = file
-        file = os.path.join(source, file)
-
-        audio, sr = sf.read(file)
-        # extract 40 dimensional MFCC & delta MFCC features
-        vector  = extract_features(audio,sr)
 
         if (f in bon):
+            file = os.path.join(source, file)
+
+            audio, sr = sf.read(file)
+            # extract 40 dimensional MFCC & delta MFCC features
+            vector  = extract_features(audio,sr)
+            #vector = padvec(vector, maxbon)
             j_bon += 1
             np.save(bon_fold+'bon_features_'+ str(j_bon) +'.npy', vector)
             if (j_bon % 100 == 0):                
                 print(j_bon,'bon saved')
                 #gc.collect() # clear up memory
 
-        if (f in sp):        
+        if (f in sp):
+            file = os.path.join(source, file)
+
+            audio, sr = sf.read(file)
+            # extract 40 dimensional MFCC & delta MFCC features
+            vector  = extract_features(audio,sr)
+            #vector = padvec(vector, maxsp)
             k_sp += 1
             np.save(sp_fold+'sp_features_'+ str(k_sp) +'.npy', vector)
             if (k_sp % 100 == 50):
@@ -112,7 +132,20 @@ def traingmm(gmm, data_fold, tot, name, dest):
     # saving the trained gaussian model
     pickle.dump(gmmmodel, open(dest + name + '.gmm', 'wb'))
 
+def test(data_fold):
+    lenth = []
+    i = 0
+    for file in os.listdir(data_fold):
+        i += 1
+        file = os.path.join(data_fold, file)
+        features = np.load(file)
+        lenth.append(features.shape[0])
+        if (i % 50 == 49):
+            print('Calculating on #',i)
+    print(len(lenth), np.max(lenth), np.mean(lenth), stats.mode(lenth)[0][0])
+
 if __name__ == '__main__':
+    
     source = './ASVspoof2019_LA_train/flac/'
     #source = './ASVspoof2019_LA_train/remain/'
     dest = './gmm_models/'
@@ -125,10 +158,19 @@ if __name__ == '__main__':
 
 
     bon, sp = txtsplit('./ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.train.trn.txt')
-    datasplit(bon, sp, source, dest, bon_fold, sp_fold)
 
-    gmm_bon = GMM(n_components = 135, covariance_type='diag',n_init = 50,warm_start= True) # min shape[0] = 135
-    gmm_sp  = GMM(n_components = 64, covariance_type='diag',n_init = 50,warm_start= True)  # min shape[0] = 64
+    maxbon = 1120
+    maxsp = 1320
+    datasplit(bon, sp, source, dest, bon_fold, sp_fold, maxbon, maxsp)
+
+    
+
+    #print(len(lenth), np.max(lenth), np.mean(lenth), stats.mode(lenth)[0][0])
+    '''gmm_bon = GMM(n_components = 289, covariance_type='diag',n_init = 50,warm_start= True) # min shape[0] = 135 # max = 1112
+    # 2580 1112 337.8709302325581 289
+    gmm_sp  = GMM(n_components = 297, covariance_type='diag',n_init = 50,warm_start= True)  # min shape[0] = 64  # max = 1318
+    # 22800 1318 341.9821929824561 297
+
 
 
     DIR = bon_fold
@@ -137,4 +179,13 @@ if __name__ == '__main__':
     spnum = len([name for name in os.listdir(DIR) if os.path.isfile(os.path.join(DIR, name))])
     
     traingmm(gmm_bon, bon_fold, bonnum , bname, dest)
-    traingmm(gmm_sp , sp_fold , spnum, sname, dest)
+    traingmm(gmm_sp , sp_fold , spnum, sname, dest)'''
+    # Took about 1 h for this setup
+
+
+    '''
+    test(bon_fold)
+    test(sp_fold)
+    '''
+
+    
