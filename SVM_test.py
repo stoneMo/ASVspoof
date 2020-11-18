@@ -3,9 +3,10 @@ import numpy as np
 import pickle
 import argparse
 from sklearn.svm import SVC
+import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--data_path", required=True, type=str, help='path to pickled file. For example, data/dev.pkl')
+parser.add_argument("--data_path", required=True, type=str, help='path to pickled file. For example, data/dev_mfcc.pkl')
 args = parser.parse_args()
 
 X = []
@@ -37,6 +38,11 @@ from scipy.interpolate import interp1d
 from sklearn.metrics import roc_curve
 
 fpr, tpr, thresholds = roc_curve(y, y_score, pos_label='spoof')
+
+# plot roc curve
+plt.figure()
+plt.plot(fpr, tpr)
+plt.savefig("SVM_CQCC_ROC.pdf")
 
 eer = brentq(lambda x : 1. - x - interp1d(fpr, tpr)(x), 0., 1.)
 thresh = interp1d(fpr, thresholds)(eer)
