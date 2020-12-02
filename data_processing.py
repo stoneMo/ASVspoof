@@ -11,7 +11,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--data_path", required=True, type=str, help='path to ASVSpoof data directory. For example, LA/ASVspoof2019_LA_train/flac/')
 parser.add_argument("--label_path", required=True, type=str, help='path to label file. For example, LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.train.trn.txt')
 parser.add_argument("--output_path", required=True, type=str, help='path to output pickle file. For example, ./data/train.pkl')
-parser.add_argument("--feature_type", required=True, type=str, help='select the feature type. cqcc or mfcc')
+# parser.add_argument("--feature_type", required=True, type=str, help='select the feature type. cqcc or mfcc')
 args = parser.parse_args()
 
 def extract_cqcc(x, fs):
