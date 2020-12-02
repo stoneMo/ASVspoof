@@ -46,6 +46,7 @@ for filepath in os.listdir(args.data_path):
     label = filename2label[filename]
     print("filename:", os.path.join(args.data_path, filepath))
     sig, rate = sf.read(os.path.join(args.data_path, filepath))
+    print("rate:", rate)
     if args.feature_type == "cqcc":
         feat = extract_cqcc(sig, rate)
     elif args.feature_type == "mfcc":
