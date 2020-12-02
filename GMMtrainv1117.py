@@ -14,9 +14,9 @@ from scipy import stats
 
 def traingmm(train_path, dest):
     #print(len(lenth), np.max(lenth), np.mean(lenth), stats.mode(lenth)[0][0])
-    gmm_bon = GMM(n_components = 512, covariance_type='diag',n_init = 50) # min shape[0] = 135 # max = 1112
+    gmm_bon = GMM(n_components = 144, covariance_type='diag',n_init = 50) # min shape[0] = 135 # max = 1112
     # 2580 1112 337.8709302325581 289
-    gmm_sp  = GMM(n_components = 512, covariance_type='diag',n_init = 50)  # min shape[0] = 64  # max = 1318
+    gmm_sp  = GMM(n_components = 144, covariance_type='diag',n_init = 50)  # min shape[0] = 64  # max = 1318
     # 22800 1318 341.9821929824561 297
 
 
