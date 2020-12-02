@@ -29,7 +29,7 @@ def extract_cqcc(x, fs):
     ZsdD = 'ZsdD'
     # COMPUTE CQCC FEATURES
     CQcc, LogP_absCQT, TimeVec, FreqVec, Ures_LogP_absCQT, Ures_FreqVec, absCQT = cqcc(x, fs, B, fmax, fmin, d, cf, ZsdD)
-    return CQcc
+    return CQcc, fmax, fmin
 
 # read in labels
 filename2label = {}
@@ -47,12 +47,18 @@ for filepath in os.listdir(args.data_path):
     print("filename:", os.path.join(args.data_path, filepath))
     sig, rate = sf.read(os.path.join(args.data_path, filepath))
     print("rate:", rate)
-    if args.feature_type == "cqcc":
-        feat = extract_cqcc(sig, rate)
-    elif args.feature_type == "mfcc":
-        feat = mfcc(sig, rate)
-    print("feat:", feat.shape)
-    feats.append((feat, label))
+    feat_cqcc, fmax, fmin = extract_cqcc(sig, rate)
+    print("feat cqcc:", feat_cqcc.shape)
+    numframes = feat_cqcc.shape[0]
+    winstep = 0.005
+    winlen =  (len(sig) - winstep*rate*(numframes-1))/rate
+    feat_mfcc = mfcc(sig,rate,winlen=winlen,winstep=winstep, lowfreq=fmin,highfreq=fmax)      # number of frames * number of cep
+    # if args.feature_type == "cqcc":
+    #     feat = extract_cqcc(sig, rate)
+    # elif args.feature_type == "mfcc":
+    #     feat = mfcc(sig, rate)
+    print("feat mfcc:", feat_mfcc.shape)
+    feats.append((feat_cqcc, feat_mfcc, label))
 
 print("number of instances:", len(feats))
 
