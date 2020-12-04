@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--data_path", required=True, type=str, help='path to pickled file. For example, data/dev_mfcc.pkl')
+parser.add_argument("--feature_type", required=True, type=str, help='select the feature type. cqcc or mfcc')
 args = parser.parse_args()
 
 X = []
@@ -15,9 +16,13 @@ max_len = 50
 lens = []
 with open(args.data_path, 'rb') as infile:
     data = pickle.load(infile)
-    for feats, label in data:
+     for feat_cqcc, feat_mfcc, label in data:
         #mfcc = mfccs.mean(0) # sum over all timesteps for now    # timesteps X num_dim
         #lens.append(mfccs.shape[0])
+        if args.feature_type == "cqcc":
+            feats = feat_cqcc
+        elif args.feature_type == "mfcc":
+            feats = feat_mfcc
         num_dim = feats.shape[1]
         if len(feats) > max_len:
             feats = feats[:max_len]
@@ -50,3 +55,9 @@ plt.savefig("SVM_CQCC_ROC.pdf")
 eer = brentq(lambda x : 1. - x - interp1d(fpr, tpr)(x), 0., 1.)
 thresh = interp1d(fpr, thresholds)(eer)
 print ('EER', eer)
+
+
+# improvments
+
+# feature combinations 
+# boosting (svm mfcc + svm cqcc)
