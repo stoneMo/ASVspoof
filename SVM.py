@@ -7,18 +7,23 @@ import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--data_path", required=True, type=str, help='path to pickled file. For example, data/train.pkl')
+parser.add_argument("--feature_type", required=True, type=str, help='select the feature type. cqcc or mfcc')
 args = parser.parse_args()
 
 X = []
 y = []
 
-max_len = 50
+max_len = 50  # 1.25 seconds  # check the timesteps of cqcc and mfcc 
 lens = []
 with open(args.data_path, 'rb') as infile:
     data = pickle.load(infile)
-    for feats, label in data:
+    for feat_cqcc, feat_mfcc, label in data:
         #mfcc = mfccs.mean(0) # sum over all timesteps for now    # timesteps X 13
         #lens.append(mfccs.shape[0])
+        if args.feature_type == "cqcc":
+            feats = feat_cqcc
+        elif args.feature_type == "mfcc":
+            feats = feat_mfcc
         num_dim = feats.shape[1]
         if len(feats) > max_len:
             feats = feats[:max_len]
