@@ -45,12 +45,12 @@ from sklearn.metrics import roc_curve
 fpr, tpr, thresholds = roc_curve(y, y_score, pos_label='spoof')
 
 # plot roc curve
-plt.figure()
-plt.plot(fpr, tpr)
-plt.xlabel("fpr")
-plt.ylabel("tpr")
-plt.title("SVM test ROC using cqcc")
-plt.savefig("SVM_CQCC_ROC.pdf")
+# plt.figure()
+# plt.plot(fpr, tpr)
+# plt.xlabel("fpr")
+# plt.ylabel("tpr")
+# plt.title("SVM test ROC using cqcc")
+# plt.savefig("SVM_CQCC_ROC.pdf")
 
 eer = brentq(lambda x : 1. - x - interp1d(fpr, tpr)(x), 0., 1.)
 thresh = interp1d(fpr, thresholds)(eer)
