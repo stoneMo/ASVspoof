@@ -12,7 +12,7 @@ from sklearn import preprocessing
 from pdb import set_trace
 from scipy import stats
 
-def testgmm(dest, test_path):
+def testgmm(test_path, dest, feature_type):
     # training data accuracy
     gmm_bon = pickle.load(open(dest + 'bon' + '.gmm','rb'))
     gmm_sp  = pickle.load(open(dest + 'sp' + '.gmm','rb'))
@@ -23,7 +23,13 @@ def testgmm(dest, test_path):
     #j = 0
     with open(test_path, 'rb') as infile:
         data = pickle.load(infile)
-        for feats, label in data:
+        for feat_cqcc, feat_mfcc, label in data:
+            # feature selection
+            if feature_type == "cqcc":
+                feats = feat_cqcc
+            elif feature_type == "mfcc":
+                feats = feat_mfcc
+            # label selection
             if (label == 'bonafide'):
                 j += 1
                 bondata.append(feats)
@@ -78,9 +84,13 @@ def testgmm(dest, test_path):
     print('Total GMM Classifier Accuracy = ',(predbresult1 + predsresult)/(j_bon + k_sp))
 
 if __name__ == '__main__':
-    train_path = './data/train_mfcc.pkl'
-    dev_path = './data/dev_mfcc.pkl'
-    test_path = './data/eval_mfcc.pkl'
 
-    dest = './data/'
-    testgmm(dest, dev_path)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--data_path", required=True, type=str,  default='./data/dev.pkl', help='path to pickled file. For example, data/train.pkl')
+    parser.add_argument("--model_path", required=True, type=str, default='./data/', help='path to pickled file. For example, data/train.pkl')
+    parser.add_argument("--feature_type", required=True, type=str, default='cqcc', help='select the feature type. cqcc or mfcc')
+    args = parser.parse_args()
+
+    dev_path = args.data_path
+    dest = args.model_path    
+    testgmm(dev_path, dest, args.feature_type)
