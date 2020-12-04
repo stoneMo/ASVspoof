@@ -50,13 +50,13 @@ The saved pickle file has the format: [(mfcc_vec[timestepx13], label[bonafide/sp
 
 ### SVM
 ```
-python3 SVM.py --data_path ./data/train_${feature_type}.pkl
+python3 SVM.py --data_path ./data/train.pkl --feature_type mfcc
 ```
 ```
-python3 SVM_test.py --data_path ./data/dev_${feature_type}.pkl
+python3 SVM_test.py --data_path ./data/dev.pkl --feature_type mfcc
 ```
 ```
-python3 SVM_test.py --data_path ./data/eval_${feature_type}.pkl
+python3 SVM_test.py --data_path ./data/eval.pkl --feature_type mfcc
 ```
 
 
